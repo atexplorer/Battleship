@@ -2,7 +2,8 @@ Goals:
 Use this as a starting point of challenging myself for different projects.
 
 Tasks:
-* Create GameController
+* GameController
+  * Create controller 
   * Manage game state
     * Playing, winner, stopped
     * Player turn
@@ -12,7 +13,10 @@ Tasks:
   * Stores
     * GUI
     * Player objects
-* Create abstraction of player (implementations: Player NPC)
+* Players
+  * Abstract Player
+  * HumanPlayer
+  * NPC
   * Each should have objects:
     * Incorrect guesses
     * Correct guesses
@@ -24,8 +28,36 @@ Tasks:
   * Each should have actions:
     * Place ships 
       * This might actually need to be handled by the controller. It should be the object that tells the user if that is a valid location or not.
-    * Guess Location
+    * Guess Location (this may be a controller thing, as the player tell the controller his/her guess)
+      * Although the computer would have to choose a place so it may need something here...
     * Guess response
 * GUI
-  * 
 * Create a "Boat" object that will hold information regarding the pieces
+
+* Completed:
+  * Classes:
+    * Controller
+      * Created
+      * Instance variables
+        * players
+          * player1 and player2 will be used to keep track of who is playing. 
+          They can be set to either a player or an NPC
+          * Scanner
+            * Used for the base CLI game
+          * Playing
+            * a boolean that keeps the game going as long as there is not winner
+    * Abstract player
+      * Created
+      * Instance variables
+        * Correct guess list
+        * incorrect guess list
+        * Board
+        * List of ships they have
+    * Npc
+      * Created
+    * Board
+      * Created
+    * Ship
+      * Created
+    * ShipTypes
+      * Created
