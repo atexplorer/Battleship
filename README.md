@@ -1,6 +1,16 @@
 Goals:
 Use this as a starting point of challenging myself for different projects.
 
+* To do list:
+  * Placing ships
+    * GUI for choosing which ship to place
+      * This will need to be updated whenever a boat is successfully placed
+    * Logic for parsing and responding if that was a valid location
+    * Tracking the placement selection
+  * Logic to disable buttons on player's board when all boats have been board
+  * Add listeners to opposing board for location selection
+    * This creates a unique scenario where we will have to consider how to differentiate between player and npc
+
 Tasks:
 * GameController
   * Create controller 
@@ -61,3 +71,8 @@ Tasks:
       * Created
     * ShipTypes
       * Created
+  * GUI
+    * Created a BattleshipFrame class to hold the board gui pieces
+    * Created a BoardPanel class that is used for the actual battleship board
+    * Within controller
+      * Created a Scrollable text field that will be used to provide text output for the user
