@@ -1,10 +1,10 @@
 package org.atexplorer.piece;
 
 public enum ShipTypes {
-    CRUISER("Carrier", 2),
+    CRUISER("Cruiser", 2),
     SUBMARINE("Submarine", 3),
     BATTLESHIP("Battleship", 4),
-    AIRCRAFT_CARRIER("Aircraft Carrier", 5);
+    CARRIER("Carrier", 5);
 
     private final String name;
     private final int size;

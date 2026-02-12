@@ -8,9 +8,12 @@ import java.awt.event.ItemEvent;
 
 public class ShipSelectPanel extends JPanel {
 
+    JComboBox<String> shipSelectBox;
+
     public ShipSelectPanel(){
         super(new GridLayout(1, 2, 0, 10));
-        this.add(createComboBox());
+        this.shipSelectBox = createComboBox();
+        this.add(shipSelectBox);
 
     }
 
@@ -27,5 +30,9 @@ public class ShipSelectPanel extends JPanel {
             }
         });
         return shipBox;
+    }
+
+    public String getCurrentShip(){
+        return  String.valueOf(shipSelectBox.getSelectedItem());
     }
 }

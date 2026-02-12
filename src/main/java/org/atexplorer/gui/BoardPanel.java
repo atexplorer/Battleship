@@ -1,29 +1,30 @@
 package org.atexplorer.gui;
 
 import org.atexplorer.Controller;
+import org.atexplorer.entity.HumanPlayer;
+import org.atexplorer.entity.Player;
 
 import javax.swing.*;
 import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 
 public class BoardPanel extends JPanel {
 
-    private final int ROWS;
-    private final int COLUMNS;
-    private final Controller controller;
+    private final GameView gameView;
+    private final Player player;
 
-    public BoardPanel(int rows, int columns, Controller controller){
+    public BoardPanel(int rows, int columns, GameView gameView, Player player){
         super(new GridLayout(rows, columns));
-        this.controller = controller;
-        this.ROWS = rows;
-        this.COLUMNS = columns;
-        setGrid();
-        System.out.println(this.getSize());
+        this.gameView = gameView;
+        this.player = player;
+        setGrid(rows, columns);
     }
 
-    private void setGrid(){
-        for(int r = 0; r < ROWS; r++){
+    private void setGrid(int rows, int columns){
+        for(int r = 0; r < rows; r++){
             char character = (char) (64 + r);
-            for(int c = 0; c < COLUMNS; c++){
+            for(int c = 0; c < columns; c++){
                 if (r == 0 || c == 0) {
                     JLabel label = new JLabel();
 
@@ -37,15 +38,50 @@ public class BoardPanel extends JPanel {
 
                     this.add(label);
                 }else {
-                    JButton button = new JButton();
-                    String positionName = String.valueOf(character) + c;
-                    button.setText(positionName);
-                    button.addActionListener(e -> {
-                        controller.parseInput("You choose position: " + button.getText() + "\n");
-                    });
-                    this.add(button);
+                    JButton button = setupJButton(character, c);
+                    this.add(button, r*11 + c);
                 }
-                //System.out.println((r * 11) + c);
+            }
+        }
+    }
+
+    private JButton setupJButton(char character, int c) {
+        JButton button = new JButton();
+        String positionName = String.valueOf(character) + c;
+        button.setName(positionName);
+        button.setText(positionName);
+        if(player instanceof HumanPlayer){
+            button.addActionListener(e -> button.setText(gameView.placeShip(player, button.getText())));
+        }else{
+            button.addActionListener(e -> gameView.guessLocation(button.getText()));
+            button.setEnabled(false);
+        }
+        return button;
+    }
+
+    public void updateButton(String buttonName){
+        String[] splitName = buttonName.split("");
+        int y = Character.codePointOf(splitName[0]) - 64;
+        int x = Integer.parseInt(splitName[0]);
+        int buttonLocation = y * 11 + x;
+        JButton button = (JButton) this.getComponent(buttonLocation);
+
+        String boardValue = player.getBoardValue(y-1, x);
+        button.setText(boardValue);
+    }
+
+    public void disableButtons(){
+        for(Component c : this.getComponents()){
+            if(c instanceof JButton button){
+                button.setEnabled(false);
+            }
+        }
+    }
+
+    public void enableButtons(){
+        for(Component c : this.getComponents()){
+            if(c instanceof JButton button){
+                button.setEnabled(true);
             }
         }
     }

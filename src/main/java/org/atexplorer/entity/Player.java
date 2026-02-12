@@ -1,19 +1,22 @@
 package org.atexplorer.entity;
 
-import org.atexplorer.piece.Board;
 import org.atexplorer.piece.Ship;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public abstract class Player {
 
     private List<String> correctGuesses;
     private List<String> incorrectGuesses;
-    private List<Ship> ships;
-    private Board board;
+    private ArrayList<Ship> ships;
+    private final String[][] board;
 
     public Player(){
-        this.board = new Board();
+        this.board = new String[10][10];
+        correctGuesses = new ArrayList<>();
+        incorrectGuesses = new ArrayList<>();
+        ships = new ArrayList<>();
     }
 
     public List<String> getCorrectGuesses() {
@@ -32,28 +35,30 @@ public abstract class Player {
         this.incorrectGuesses = incorrectGuesses;
     }
 
-    public List<Ship> getShips() {
+    public ArrayList<Ship> getShips() {
         return ships;
     }
 
-    public void setShips(List<Ship> ships) {
+    public void setShips(ArrayList<Ship> ships) {
         this.ships = ships;
     }
 
-    public Board getBoard() {
+    public String[][] getBoard() {
         return board;
-    }
-
-    public void setBoard(Board board) {
-        this.board = board;
     }
 
     public int shipsLeft(){
         return this.ships.size();
     }
 
+
+    //TODO: these two methods need to be removed and placed in a service method.
     public boolean hasGuessed(String guess){
         return correctGuesses.contains(guess) && incorrectGuesses.contains(guess);
+    }
+
+    public String getBoardValue(int y, int x){
+        return board[y][x];
     }
 
 
