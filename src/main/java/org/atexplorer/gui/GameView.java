@@ -1,6 +1,7 @@
 package org.atexplorer.gui;
 
 import org.atexplorer.Controller;
+import org.atexplorer.entity.Player;
 import org.atexplorer.piece.ShipTypes;
 
 import javax.swing.*;
@@ -15,63 +16,54 @@ public class GameView {
 
     private final Controller controller;
 
-    private final JFrame jFrame;
+    private Player player1;
+    private Player player2;
 
-    public GameView(Controller controller, int rows, int columns){
+    private final JFrame jFrame;
+    private JPanel topBoard;
+    private JPanel bottomBoard;
+    private ShipSelectPanel shipSelect;
+    private JTextArea textArea;
+
+    public GameView(Controller controller, int rows, int columns, Player player1, Player player2){
         this.rows = rows;
         this.columns = columns;
         this.controller = controller;
+        this.player1 = player1;
+        this.player2 = player2;
 
         this.jFrame = new JFrame("Battleship");
-        setupFrame();
-
-        jFrame.add(createBoard(), BorderLayout.CENTER);
-
-        jFrame.add(new ShipSelectPanel(), BorderLayout.SOUTH);
-
-        jFrame.add(createTextPane(), BorderLayout.EAST);
-
-
-        jFrame.setVisible(true);
-    }
-
-    private void setupFrame(){
         jFrame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         jFrame.setSize(1000, 1000);
         jFrame.setLocationRelativeTo(null);
 
-        //jFrame.setLayout(new GridBagLayout());
-    }
+        topBoard = new BoardPanel(rows, columns, this, player1);
+        bottomBoard = new BoardPanel(rows,columns, this, player2);
 
-    private JScrollPane createTextPane(){
-        JTextArea textArea = new JTextArea(rows, columns);
+        JPanel jPanel = new JPanel(new GridLayout(2, 0));
+        jPanel.add(topBoard);
+        jPanel.add(bottomBoard);
+        jFrame.add(jPanel, BorderLayout.CENTER);
+
+        this.shipSelect = new ShipSelectPanel();
+        jFrame.add(shipSelect, BorderLayout.SOUTH);
+
+        textArea = new JTextArea(rows, columns);
         textArea.setLineWrap(true);
         textArea.setEditable(false);
-        return new JScrollPane(textArea);
+        jFrame.add(new JScrollPane(textArea), BorderLayout.EAST);
+
+        jFrame.setVisible(true);
     }
 
-    private JPanel createBoard(){
-        JPanel jPanel = new JPanel(new GridLayout(2, 0));
+    public String placeShip(Player player, String location){
+        String ship = shipSelect.getCurrentShip();
 
-        jPanel.add(new BoardPanel(rows, columns, controller));
-        jPanel.add(new BoardPanel(rows,columns, controller));
-
-
-        return jPanel;
+        textArea.append("you chose to place " + ship + " at location: " + location);
+        return controller.placePiece(player, location, ship);
     }
 
-    public JComboBox<String> createComboBox(){
-        JComboBox<String> shipBox = new JComboBox<>();
-        for(ShipTypes type : ShipTypes.values()){
-            shipBox.addItem(type.getName());
-        }
+    public void guessLocation(String location){
 
-        shipBox.setSelectedIndex(0);
-        shipBox.addItemListener(e -> {
-            if(e.getStateChange() == ItemEvent.SELECTED){
-                System.out.println(e.getItem());
-            }
-        });
-        return shipBox;
     }
 }

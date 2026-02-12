@@ -7,7 +7,7 @@ public class Ship {
 
     public Ship(ShipTypes shipType) {
         this.shipType = shipType;
-        this.positions = new String[shipType.getSize()];
+        this.positions = new String[0];
     }
 
     public String getShipName(){
@@ -24,5 +24,26 @@ public class Ship {
 
     public String[] getPositions() {
         return positions;
+    }
+
+    public ShipTypes getShipType() {
+        return shipType;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if(obj == this){
+            return true;
+        }
+
+        if(obj == null){
+            return false;
+        }
+
+        if(!(obj instanceof Ship)){
+            return false;
+        }
+
+        return this.shipType.equals(((Ship) obj).getShipType());
     }
 }
