@@ -2,17 +2,11 @@ package org.atexplorer.gui;
 
 import org.atexplorer.Controller;
 import org.atexplorer.entity.Player;
-import org.atexplorer.piece.ShipTypes;
 
 import javax.swing.*;
-import javax.swing.border.Border;
 import java.awt.*;
-import java.awt.event.ItemEvent;
 
 public class GameView {
-
-    private final int rows;
-    private final int columns;
 
     private final Controller controller;
 
@@ -22,12 +16,10 @@ public class GameView {
     private final JFrame jFrame;
     private JPanel topBoard;
     private JPanel bottomBoard;
-    private ShipSelectPanel shipSelect;
-    private JTextArea textArea;
+    private final ShipSelectPanel shipSelect;
+    private final JTextArea textArea;
 
     public GameView(Controller controller, int rows, int columns, Player player1, Player player2){
-        this.rows = rows;
-        this.columns = columns;
         this.controller = controller;
         this.player1 = player1;
         this.player2 = player2;
@@ -59,8 +51,21 @@ public class GameView {
     public String placeShip(Player player, String location){
         String ship = shipSelect.getCurrentShip();
 
-        textArea.append("you chose to place " + ship + " at location: " + location);
-        return controller.placePiece(player, location, ship);
+        String response = controller.processInput(player, location, ship);
+        String output;
+
+        //This should probably be in the controller method... and we should have a method that adds text to the textArea
+        if(response.equals(location)){
+            output = location + " is an invalid location for ship " + ship;
+        } else if (response.equals("X")) {
+            output = "That's a hit!";
+        } else if (response.equals("O")) {
+            output = "That's a miss...";
+        }else{
+            output = "You placed " + ship + " at location: " + location;
+        }
+        textArea.append(output + "\n");
+        return response;
     }
 
     public void guessLocation(String location){
