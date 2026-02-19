@@ -7,12 +7,14 @@ import java.util.List;
 
 public abstract class Player {
 
+    private String name;
     private List<String> correctGuesses;
     private List<String> incorrectGuesses;
     private ArrayList<Ship> ships;
     private final String[][] board;
 
-    public Player(){
+    public Player(String name){
+        this.name = name;
         this.board = new String[10][10];
         correctGuesses = new ArrayList<>();
         incorrectGuesses = new ArrayList<>();
