@@ -5,6 +5,8 @@ import org.atexplorer.entity.Npc;
 import org.atexplorer.entity.NpcDifficulty;
 import org.atexplorer.entity.Player;
 import org.atexplorer.gui.*;
+import org.atexplorer.piece.Ship;
+import org.atexplorer.piece.ShipTypes;
 import org.atexplorer.service.SetupService;
 
 
@@ -37,38 +39,21 @@ public class Controller {
     public void play(String param1, String param2, String param3){
         if(gameState.equals(GameState.SETUP)){
             setup(param1, param2);
-            if(player1 != null && player2 != null){
+            if (player1 != null && player2 != null && shipListComplete(player1) && shipListComplete(player2)){
                 gameState = GameState.PLAYING;
             }
         }
+
 
     }
 
     //TODO: need to handle invalid player type and param responses
     public void setup(String playerType, String param){
         if(player1 == null){
-            player1 = setupPlayer(playerType, param);
+            player1 = setupService.setupPlayer(playerType, param);
         }else{
-            player2 = setupPlayer(playerType, param);
+            player2 = setupService.setupPlayer(playerType, param);
         }
-    }
-
-    public Player setupPlayer(String playerType, String param){
-        if("NPC".equalsIgnoreCase(playerType)){
-            NpcDifficulty difficulty;
-            switch (param.toLowerCase()){
-                case "easy" -> difficulty = NpcDifficulty.EASY;
-                case "medium" -> difficulty = NpcDifficulty.MEDIUM;
-                case "hard" -> difficulty = NpcDifficulty.HARD;
-                default -> {
-                    return null;
-                }
-            }
-            return new Npc(difficulty);
-        } else if ("Player".equalsIgnoreCase(playerType)) {
-            return new HumanPlayer(param);
-        }
-        return null;
     }
 
     public boolean setPiece(Player player, String location, String shipName){
@@ -80,6 +65,20 @@ public class Controller {
     //this allows us to process any input and removes need for the GameView having some kind of state knowledge of whether to send the shipName
     public String processInput(Player player, String location, String shipName){
         return setupService.placePiece(player, location, shipName);
+    }
+
+    private boolean shipListComplete(Player player){
+        if(player.getShips().size() < ShipTypes.values().length){
+            return false;
+        }
+
+        for (Ship ship : player.getShips()){
+            if(ship.getPositions().length != ShipTypes.of(ship.getShipName()).getSize()){
+                return false;
+            }
+        }
+
+        return true;
     }
 
 

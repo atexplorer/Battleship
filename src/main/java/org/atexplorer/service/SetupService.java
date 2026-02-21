@@ -1,5 +1,8 @@
 package org.atexplorer.service;
 
+import org.atexplorer.entity.HumanPlayer;
+import org.atexplorer.entity.Npc;
+import org.atexplorer.entity.NpcDifficulty;
 import org.atexplorer.entity.Player;
 import org.atexplorer.piece.Ship;
 import org.atexplorer.piece.ShipTypes;
@@ -9,6 +12,24 @@ import java.util.Arrays;
 import java.util.Random;
 
 public class SetupService {
+
+    public Player setupPlayer(String playerType, String param){
+        if("NPC".equalsIgnoreCase(playerType)){
+            NpcDifficulty difficulty;
+            switch (param.toLowerCase()){
+                case "easy" -> difficulty = NpcDifficulty.EASY;
+                case "medium" -> difficulty = NpcDifficulty.MEDIUM;
+                case "hard" -> difficulty = NpcDifficulty.HARD;
+                default -> {
+                    return null;
+                }
+            }
+            return new Npc(difficulty);
+        } else if ("Player".equalsIgnoreCase(playerType)) {
+            return new HumanPlayer(param);
+        }
+        return null;
+    }
 
     //Todo: Create a method that can be called to determine if we need to remove the Ship name from the drop down
     public String placePiece(Player player, String location, String shipName){
