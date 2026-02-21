@@ -2,13 +2,22 @@ package org.atexplorer;
 
 import org.atexplorer.entity.HumanPlayer;
 import org.atexplorer.entity.Npc;
+import org.atexplorer.entity.NpcDifficulty;
 import org.atexplorer.entity.Player;
 import org.atexplorer.gui.*;
+import org.atexplorer.piece.Ship;
+import org.atexplorer.piece.ShipTypes;
 import org.atexplorer.service.SetupService;
 
 
 
 public class Controller {
+
+    private enum GameState{
+        SETUP,
+        PLAYING,
+        FINISHED
+    }
 
     private final SetupService setupService;
 
@@ -19,17 +28,57 @@ public class Controller {
 
     private final GameView gameView;
 
+    private GameState gameState;
+
     public Controller(){
         this.setupService = new SetupService();
-        this.player1 = new Npc();
-        this.player2 = new HumanPlayer();
+        this.gameState = GameState.SETUP;
         this.gameView = new GameView(this, ROWS, COLUMNS, player1, player2);
+    }
+
+    public void play(String param1, String param2, String param3){
+        if(gameState.equals(GameState.SETUP)){
+            setup(param1, param2);
+            if (player1 != null && player2 != null && shipListComplete(player1) && shipListComplete(player2)){
+                gameState = GameState.PLAYING;
+            }
+        }
+
+
+    }
+
+    //TODO: need to handle invalid player type and param responses
+    public void setup(String playerType, String param){
+        if(player1 == null){
+            player1 = setupService.setupPlayer(playerType, param);
+        }else{
+            player2 = setupService.setupPlayer(playerType, param);
+        }
+    }
+
+    public boolean setPiece(Player player, String location, String shipName){
+        String result = setupService.placePiece(player, location, shipName);
+        return !result.equals(location);
     }
 
     //What we should probably do, is have this controller call the gameView for the current shipName value
     //this allows us to process any input and removes need for the GameView having some kind of state knowledge of whether to send the shipName
     public String processInput(Player player, String location, String shipName){
         return setupService.placePiece(player, location, shipName);
+    }
+
+    private boolean shipListComplete(Player player){
+        if(player.getShips().size() < ShipTypes.values().length){
+            return false;
+        }
+
+        for (Ship ship : player.getShips()){
+            if(ship.getPositions().length != ShipTypes.of(ship.getShipName()).getSize()){
+                return false;
+            }
+        }
+
+        return true;
     }
 
 
