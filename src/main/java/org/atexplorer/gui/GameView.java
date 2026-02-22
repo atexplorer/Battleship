@@ -48,10 +48,10 @@ public class GameView {
         jFrame.setVisible(true);
     }
 
-    public String placeShip(Player player, String location){
+    /*public String placeShip(Player player, String location){
         String ship = shipSelect.getCurrentShip();
 
-        String response = controller.processInput(player, location, ship);
+        String response = controller.processBoardAction(player, location, ship);
         String output;
 
         //This should probably be in the controller method... and we should have a method that adds text to the textArea
@@ -66,7 +66,7 @@ public class GameView {
         }
         textArea.append(output + "\n");
         return response;
-    }
+    }*/
 
     public void guessLocation(String location){
 
