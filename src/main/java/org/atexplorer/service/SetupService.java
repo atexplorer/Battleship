@@ -1,5 +1,7 @@
 package org.atexplorer.service;
 
+import org.atexplorer.dto.PlaceShipAction;
+import org.atexplorer.dto.PlayerInitAction;
 import org.atexplorer.entity.HumanPlayer;
 import org.atexplorer.entity.Npc;
 import org.atexplorer.entity.NpcDifficulty;
@@ -13,10 +15,10 @@ import java.util.Random;
 
 public class SetupService {
 
-    public Player setupPlayer(String playerType, String param){
-        if("NPC".equalsIgnoreCase(playerType)){
+    public Player setupPlayer(PlayerInitAction initPlayer){
+        if("NPC".equalsIgnoreCase(initPlayer.playerType())){
             NpcDifficulty difficulty;
-            switch (param.toLowerCase()){
+            switch (initPlayer.param().toLowerCase()){
                 case "easy" -> difficulty = NpcDifficulty.EASY;
                 case "medium" -> difficulty = NpcDifficulty.MEDIUM;
                 case "hard" -> difficulty = NpcDifficulty.HARD;
@@ -25,16 +27,16 @@ public class SetupService {
                 }
             }
             return new Npc(difficulty);
-        } else if ("Player".equalsIgnoreCase(playerType)) {
-            return new HumanPlayer(param);
+        } else if ("Player".equalsIgnoreCase(initPlayer.playerType())) {
+            return new HumanPlayer(initPlayer.param());
         }
         return null;
     }
 
-    //Todo: Create a method that can be called to determine if we need to remove the Ship name from the drop down
-    public String placePiece(Player player, String location, String shipName){
-        //I don't particularly like this implementation for a ship, it feels to complicated
-        Ship ship = new Ship(ShipTypes.valueOf(shipName.toUpperCase()));
+    public String placePiece(PlaceShipAction psa){
+        Player player = psa.player();
+        String location = psa.location();
+        Ship ship = new Ship(ShipTypes.valueOf(psa.shipName().toUpperCase()));
 
         ArrayList<Ship> shipList = player.getShips();
 
@@ -54,9 +56,10 @@ public class SetupService {
         }
     }
 
-    public void setupNpc(Player player){
+    //Todo: implement logic that will be used to set up the NPCs board
+    public void setupNpc(Player npc){
         Random random = new Random();
-        for(Ship ship : player.getShips()){
+        for(Ship ship : npc.getShips()){
 
         }
     }

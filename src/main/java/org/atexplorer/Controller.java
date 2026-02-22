@@ -1,8 +1,9 @@
 package org.atexplorer;
 
-import org.atexplorer.entity.HumanPlayer;
-import org.atexplorer.entity.Npc;
-import org.atexplorer.entity.NpcDifficulty;
+import org.atexplorer.dto.GuessAction;
+import org.atexplorer.dto.PlaceShipAction;
+import org.atexplorer.dto.PlayerAction;
+import org.atexplorer.dto.PlayerInitAction;
 import org.atexplorer.entity.Player;
 import org.atexplorer.gui.*;
 import org.atexplorer.piece.Ship;
@@ -36,37 +37,26 @@ public class Controller {
         this.gameView = new GameView(this, ROWS, COLUMNS, player1, player2);
     }
 
-    public void play(String param1, String param2, String param3){
-        if(gameState.equals(GameState.SETUP)){
-            setup(param1, param2);
-            if (player1 != null && player2 != null && shipListComplete(player1) && shipListComplete(player2)){
-                gameState = GameState.PLAYING;
-            }
-        }
-
-
-    }
-
-    //TODO: need to handle invalid player type and param responses
-    public void setup(String playerType, String param){
+    //This method will handle setting up player objects that will be used by the Game view
+    public void initializePlayer(PlayerInitAction playerInitAction){
         if(player1 == null){
-            player1 = setupService.setupPlayer(playerType, param);
+            player1 = setupService.setupPlayer(playerInitAction);
         }else{
-            player2 = setupService.setupPlayer(playerType, param);
+            player2 = setupService.setupPlayer(playerInitAction);
         }
     }
 
-    public boolean setPiece(Player player, String location, String shipName){
-        String result = setupService.placePiece(player, location, shipName);
-        return !result.equals(location);
+    //This will process the action when a board button is pressed, which will either be to set a piece or to guess where an enemy piece is
+    public String processBoardAction(PlayerAction playerAction){
+        switch (playerAction){
+            case PlaceShipAction psa -> setupService.placePiece(psa);
+            case GuessAction ga -> System.out.println("Guess action passed to controller");
+        }
+
+        return "processed PlayerAction";
     }
 
-    //What we should probably do, is have this controller call the gameView for the current shipName value
-    //this allows us to process any input and removes need for the GameView having some kind of state knowledge of whether to send the shipName
-    public String processInput(Player player, String location, String shipName){
-        return setupService.placePiece(player, location, shipName);
-    }
-
+    //Todo: this method isn't finished and needs to be set up to tell the view when to move to the next phase of the game
     private boolean shipListComplete(Player player){
         if(player.getShips().size() < ShipTypes.values().length){
             return false;
@@ -79,12 +69,6 @@ public class Controller {
         }
 
         return true;
-    }
-
-
-
-    public void parseInput(String s){
-        System.out.println(s);
     }
 
 
