@@ -68,6 +68,11 @@ public class GameView {
         return response;
     }*/
 
+    public String placeShip(Player player, String location){
+        System.out.println(player.toString() + " " + location);
+        return "foo";
+    }
+
     public void guessLocation(String location){
 
     }

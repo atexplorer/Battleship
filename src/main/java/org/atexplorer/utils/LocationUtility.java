@@ -6,7 +6,7 @@ public class LocationUtility {
 
     public static int getX(String location){
         String[] cords = location.split("");
-        return Integer.parseInt(cords[1]);
+        return Integer.parseInt(cords[1])-1;
     }
 
     public static int getY(String location){
@@ -15,6 +15,11 @@ public class LocationUtility {
     }
 
     public static String getAlphaLocation(int numericLocation){
-        return ((char) numericLocation % Controller.COLUMNS + 65) + String.valueOf(numericLocation / Controller.ROWS + 1);
+        String character = String.valueOf(((char) (numericLocation % Controller.COLUMNS + 65)));
+        return  character + (numericLocation / Controller.ROWS + 1);
+    }
+
+    public static int getNumericLocation(String alphaLocation){
+        return getX(alphaLocation)*10 + getY(alphaLocation);
     }
 }
