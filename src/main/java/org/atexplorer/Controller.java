@@ -8,7 +8,9 @@ import org.atexplorer.entity.Player;
 import org.atexplorer.gui.*;
 import org.atexplorer.piece.Ship;
 import org.atexplorer.piece.ShipTypes;
-import org.atexplorer.service.SetupService;
+import org.atexplorer.service.BoardSetupService;
+import org.atexplorer.service.BoardSetupServiceImpl;
+import org.atexplorer.service.PlayerSetupService;
 
 
 
@@ -20,10 +22,11 @@ public class Controller {
         FINISHED
     }
 
-    private final SetupService setupService;
+    private final PlayerSetupService setupService;
+    private BoardSetupService boardSetupService;
 
-    private static final int ROWS = 11;
-    private static final int COLUMNS = 11;
+    public static final int ROWS = 10;
+    public static final int COLUMNS = 10;
     private Player player1;
     private Player player2;
 
@@ -32,7 +35,7 @@ public class Controller {
     private GameState gameState;
 
     public Controller(){
-        this.setupService = new SetupService();
+        this.setupService = new PlayerSetupService();
         this.gameState = GameState.SETUP;
         this.gameView = new GameView(this, ROWS, COLUMNS, player1, player2);
     }
@@ -46,10 +49,15 @@ public class Controller {
         }
     }
 
-    //This will process the action when a board button is pressed, which will either be to set a piece or to guess where an enemy piece is
+    //Todo: need to create a separate method that will handle each playerAction
     public String processBoardAction(PlayerAction playerAction){
         switch (playerAction){
-            case PlaceShipAction psa -> setupService.placePiece(psa);
+            case PlaceShipAction psa -> {
+                boardSetupService = new BoardSetupServiceImpl();
+                //this is going to have to be a shared boolean with guess action
+                boolean success = boardSetupService.setPiece(psa);
+            }
+            //Check if location had enemy piece, if enemy piece: check if any full ships have been sunk, tell board to update
             case GuessAction ga -> System.out.println("Guess action passed to controller");
         }
 

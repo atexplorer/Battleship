@@ -45,6 +45,8 @@ public abstract class Player {
         this.ships = ships;
     }
 
+    public void addShip(Ship ship){this.ships.add(ship);}
+
     public String[][] getBoard() {
         return board;
     }

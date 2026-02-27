@@ -4,7 +4,7 @@ public class Npc extends Player{
     private NpcDifficulty difficulty;
 
     public Npc(NpcDifficulty difficulty){
-        super();
+        super("NPC");
         this.difficulty = difficulty;
     }
 }
