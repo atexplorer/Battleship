@@ -8,6 +8,8 @@ import org.atexplorer.entity.Player;
 import org.atexplorer.gui.*;
 import org.atexplorer.piece.Ship;
 import org.atexplorer.piece.ShipTypes;
+import org.atexplorer.service.BoardSetupService;
+import org.atexplorer.service.BoardSetupServiceImpl;
 import org.atexplorer.service.PlayerSetupService;
 
 
@@ -21,6 +23,7 @@ public class Controller {
     }
 
     private final PlayerSetupService setupService;
+    private BoardSetupService boardSetupService;
 
     public static final int ROWS = 10;
     public static final int COLUMNS = 10;
@@ -46,12 +49,14 @@ public class Controller {
         }
     }
 
-    //This will process the action when a board button is pressed, which will either be to set a piece or to guess where an enemy piece is
     //Todo: need to create a separate method that will handle each playerAction
     public String processBoardAction(PlayerAction playerAction){
         switch (playerAction){
-            //PlaceShip should include placing the piece, if piece successfully placed: determine if any ships have been fully placed, removing any from the dropdown, tell board to update, check if all ships have been placed successfully
-            case PlaceShipAction psa -> setupService.placePiece(psa);
+            case PlaceShipAction psa -> {
+                boardSetupService = new BoardSetupServiceImpl();
+                //this is going to have to be a shared boolean with guess action
+                boolean success = boardSetupService.setPiece(psa);
+            }
             //Check if location had enemy piece, if enemy piece: check if any full ships have been sunk, tell board to update
             case GuessAction ga -> System.out.println("Guess action passed to controller");
         }

@@ -3,42 +3,26 @@ package org.atexplorer.service;
 import org.atexplorer.Controller;
 import org.atexplorer.dto.PlaceShipAction;
 import org.atexplorer.entity.Player;
+import org.atexplorer.piece.Orientation;
 import org.atexplorer.piece.Ship;
 import org.atexplorer.piece.ShipTypes;
 import org.atexplorer.utils.LocationUtility;
 
 import java.util.Arrays;
 
-public class SetupServiceImpl implements SetupService{
-
-    private enum Direction{
-        UP (-10),
-        RIGHT (1),
-        DOWN (10),
-        LEFT (-1);
-
-        private final int interval;
-
-        Direction(int interval){
-            this.interval = interval;
-        }
-
-        public int getInterval() {
-            return interval;
-        }
-    }
+public class BoardSetupServiceImpl implements BoardSetupService {
 
     public boolean setPiece(PlaceShipAction psa){
         String anchorLocationAlpha= psa.location();
         int anchorLocationNum = LocationUtility.getNumericLocation(anchorLocationAlpha);
-        Direction direction = Direction.valueOf(psa.direction().toUpperCase());
+        Orientation orientation = Orientation.valueOf(psa.direction().toUpperCase());
         ShipTypes shipType = ShipTypes.of(psa.shipName());
 
-        if(locationCollision(anchorLocationAlpha, psa.player()) || !maxLocationOnBoard(anchorLocationNum, direction, shipType.getSize()) || shipTypeCreated(shipType, psa.player())){
+        if(locationCollision(anchorLocationAlpha, psa.player()) || !maxLocationOnBoard(anchorLocationNum, orientation, shipType.getSize()) || shipTypeCreated(shipType, psa.player())){
             return false;
         }
 
-        String[] shipLocationArray = generateLocationsArray(anchorLocationNum, direction, shipType.getSize());
+        String[] shipLocationArray = generateLocationsArray(anchorLocationNum, orientation, shipType.getSize());
 
         for(String location : shipLocationArray){
             if(locationCollision(location, psa.player())){
@@ -52,12 +36,12 @@ public class SetupServiceImpl implements SetupService{
         return true;
     }
 
-    private String[] generateLocationsArray(int anchorLocation, Direction direction, int shipLength){
+    private String[] generateLocationsArray(int anchorLocation, Orientation orientation, int shipLength){
         int[] locations = new int[shipLength];
         locations[0] = anchorLocation;
 
         for(int i = 1; i < shipLength; i++){
-            locations[i] = locations[i-1] + direction.getInterval();
+            locations[i] = locations[i-1] + orientation.getInterval();
         }
 
         return Arrays.stream(locations).mapToObj(LocationUtility::getAlphaLocation).toArray(String[]::new);
@@ -75,13 +59,13 @@ public class SetupServiceImpl implements SetupService{
         return false;
     }
 
-    private boolean maxLocationOnBoard(int anchorLocation, Direction direction, int shipLength){
-        int endLocation = anchorLocation + shipLength * direction.getInterval();
+    private boolean maxLocationOnBoard(int anchorLocation, Orientation orrientation, int shipLength){
+        int endLocation = anchorLocation + shipLength * orrientation.getInterval();
 
-        return switch (direction){
-            case Direction.UP -> endLocation > 0;
-            case Direction.LEFT, Direction.RIGHT -> (endLocation/ Controller.COLUMNS) == (anchorLocation/Controller.COLUMNS);
-            case Direction.DOWN -> endLocation < (Controller.ROWS * Controller.COLUMNS);
+        return switch (orrientation){
+            case Orientation.UP -> endLocation > 0;
+            case Orientation.LEFT, Orientation.RIGHT -> (endLocation/ Controller.COLUMNS) == (anchorLocation/Controller.COLUMNS);
+            case Orientation.DOWN -> endLocation < (Controller.ROWS * Controller.COLUMNS);
         };
     }
 
