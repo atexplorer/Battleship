@@ -34,8 +34,8 @@ public class NpcBoardSetupServiceImpl extends BoardSetupServiceImpl{
 
     private PlaceShipAction generateNpcShipAction(Player player, ShipTypes shipType, Random random, ArrayList<Orientation> orientations){
         return new PlaceShipAction(player,
-                shipType.getName(),
                 LocationUtility.getAlphaLocation(random.nextInt(Controller.COLUMNS * Controller.ROWS)),
+                shipType.getName(),
                 orientations.get(random.nextInt(orientations.size())).name());
     }
 }
