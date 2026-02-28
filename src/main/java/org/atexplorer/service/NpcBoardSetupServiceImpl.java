@@ -7,12 +7,11 @@ import org.atexplorer.piece.Orientation;
 import org.atexplorer.piece.ShipTypes;
 import org.atexplorer.utils.LocationUtility;
 
-import javax.swing.text.Utilities;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Random;
 
-public class NpcBoardSetupImpl extends BoardSetupServiceImpl{
+public class NpcBoardSetupServiceImpl extends BoardSetupServiceImpl{
 
     @Override
     public boolean setPiece(PlaceShipAction psa) {
