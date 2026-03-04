@@ -11,9 +11,9 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 
-public class BoardSetupServiceImplTest {
+public class BoardServiceImplTest {
 
-    private final BoardSetupService boardSetupService = new BoardSetupServiceImpl();
+    private final BoardService boardService = new BoardServiceImpl();
     private Player testPlayer;
 
     @BeforeEach
@@ -24,7 +24,7 @@ public class BoardSetupServiceImplTest {
     @Test
     public void testSetPiece_Pass(){
         PlaceShipAction psa = new PlaceShipAction(testPlayer, "A2", "Cruiser", "Down");
-        assertTrue(boardSetupService.setPiece(psa));
+        assertTrue(boardService.setPiece(psa));
         assertArrayEquals(new String[]{"A2", "A3"}, testPlayer.getShips().getFirst().getPositions());
     }
 
@@ -35,31 +35,31 @@ public class BoardSetupServiceImplTest {
         testPlayer.addShip(testCruiser);
 
         PlaceShipAction psa = new PlaceShipAction(testPlayer, "A2", "Submarine", "Right");
-        assertFalse(boardSetupService.setPiece(psa));
+        assertFalse(boardService.setPiece(psa));
     }
 
     @Test
     public void testSetPiece_Fail_OffBoardLeft(){
         PlaceShipAction psa = new PlaceShipAction(testPlayer, "A2", "Cruiser", "Left");
-        assertFalse(boardSetupService.setPiece(psa));
+        assertFalse(boardService.setPiece(psa));
     }
 
     @Test
     public void testSetPiece_Fail_OffBoardRight(){
         PlaceShipAction psa = new PlaceShipAction(testPlayer, "J2", "Cruiser", "Right");
-        assertFalse(boardSetupService.setPiece(psa));
+        assertFalse(boardService.setPiece(psa));
     }
 
     @Test
     public void testSetPiece_Fail_OffBoardTop(){
         PlaceShipAction psa = new PlaceShipAction(testPlayer, "E2", "Submarine", "Up");
-        assertFalse(boardSetupService.setPiece(psa));
+        assertFalse(boardService.setPiece(psa));
     }
 
     @Test
     public void testSetPiece_Fail_OffBoardBottom(){
         PlaceShipAction psa = new PlaceShipAction(testPlayer, "G10", "Cruiser", "Down");
-        assertFalse(boardSetupService.setPiece(psa));
+        assertFalse(boardService.setPiece(psa));
     }
 
     @Test
@@ -69,7 +69,7 @@ public class BoardSetupServiceImplTest {
         testPlayer.addShip(testCruiser);
 
         PlaceShipAction psa = new PlaceShipAction(testPlayer, "E5", "Cruiser", "Left");
-        assertFalse(boardSetupService.setPiece(psa));
+        assertFalse(boardService.setPiece(psa));
     }
 
     @Test
@@ -79,7 +79,7 @@ public class BoardSetupServiceImplTest {
         testPlayer.addShip(testCruiser);
 
         PlaceShipAction psa = new PlaceShipAction(testPlayer, "C2", "Submarine", "Left");
-        assertFalse(boardSetupService.setPiece(psa));
+        assertFalse(boardService.setPiece(psa));
     }
 
 

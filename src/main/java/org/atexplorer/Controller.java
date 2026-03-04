@@ -8,8 +8,8 @@ import org.atexplorer.entity.Player;
 import org.atexplorer.gui.*;
 import org.atexplorer.piece.Ship;
 import org.atexplorer.piece.ShipTypes;
-import org.atexplorer.service.BoardSetupService;
-import org.atexplorer.service.BoardSetupServiceImpl;
+import org.atexplorer.service.BoardService;
+import org.atexplorer.service.BoardServiceImpl;
 import org.atexplorer.service.PlayerSetupService;
 
 
@@ -23,7 +23,7 @@ public class Controller {
     }
 
     private final PlayerSetupService setupService;
-    private BoardSetupService boardSetupService;
+    private BoardService boardService;
 
     public static final int ROWS = 10;
     public static final int COLUMNS = 10;
@@ -53,9 +53,9 @@ public class Controller {
     public String processBoardAction(PlayerAction playerAction){
         switch (playerAction){
             case PlaceShipAction psa -> {
-                boardSetupService = new BoardSetupServiceImpl();
+                boardService = new BoardServiceImpl();
                 //this is going to have to be a shared boolean with guess action
-                boolean success = boardSetupService.setPiece(psa);
+                boolean success = boardService.setPiece(psa);
             }
             //Check if location had enemy piece, if enemy piece: check if any full ships have been sunk, tell board to update
             case GuessAction ga -> System.out.println("Guess action passed to controller");

@@ -1,6 +1,7 @@
 package org.atexplorer.service;
 
 import org.atexplorer.Controller;
+import org.atexplorer.dto.GuessAction;
 import org.atexplorer.dto.PlaceShipAction;
 import org.atexplorer.entity.Player;
 import org.atexplorer.piece.Orientation;
@@ -8,10 +9,15 @@ import org.atexplorer.piece.Ship;
 import org.atexplorer.piece.ShipTypes;
 import org.atexplorer.utils.LocationUtility;
 
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 
-public class BoardSetupServiceImpl implements BoardSetupService {
+import static org.atexplorer.utils.LocationUtility.locationCollision;
 
+public class BoardServiceImpl implements BoardService {
+
+    @Override
     public boolean setPiece(PlaceShipAction psa){
         String anchorLocationAlpha= psa.location();
         int anchorLocationNum = LocationUtility.getNumericLocation(anchorLocationAlpha);
@@ -36,6 +42,20 @@ public class BoardSetupServiceImpl implements BoardSetupService {
         return true;
     }
 
+    @Override
+    public boolean removePiece(GuessAction ga) {
+        ArrayList<Ship> ships = ga.player().getShips();
+
+        for(Ship ship : ships){
+            for(String loc : ship.getPositions()){
+                if(loc.equals(ga.location())){
+
+                }
+            }
+        }
+        return false;
+    }
+
     private String[] generateLocationsArray(int anchorLocation, Orientation orientation, int shipLength){
         int[] locations = new int[shipLength];
         locations[0] = anchorLocation;
@@ -45,18 +65,6 @@ public class BoardSetupServiceImpl implements BoardSetupService {
         }
 
         return Arrays.stream(locations).mapToObj(LocationUtility::getAlphaLocation).toArray(String[]::new);
-    }
-
-
-    private boolean locationCollision(String inputLocation, Player player){
-        for(Ship ship : player.getShips()){
-            for(String location : ship.getPositions()){
-                if(location.equals(inputLocation)){
-                    return true;
-                }
-            }
-        }
-        return false;
     }
 
     private boolean maxLocationOnBoard(int anchorLocation, Orientation orrientation, int shipLength){
@@ -76,5 +84,15 @@ public class BoardSetupServiceImpl implements BoardSetupService {
             }
         }
         return false;
+    }
+
+    private Ship getHitShip(List<Ship> ships, String location){
+        for(Ship ship : ships){
+            for(String loc : ship.getPositions()){
+                if(loc.equals(location)){
+                    return ship;
+                }
+            }
+        }
     }
 }

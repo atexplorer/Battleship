@@ -8,33 +8,41 @@ import java.util.List;
 public abstract class Player {
 
     private String name;
-    private List<String> correctGuesses;
-    private List<String> incorrectGuesses;
+    private List<String> hitLocations;
+    private List<String> missLocations;
     private ArrayList<Ship> ships;
     private final String[][] board;
 
     public Player(String name){
         this.name = name;
         this.board = new String[10][10];
-        correctGuesses = new ArrayList<>();
-        incorrectGuesses = new ArrayList<>();
+        hitLocations = new ArrayList<>();
+        missLocations = new ArrayList<>();
         ships = new ArrayList<>();
     }
 
-    public List<String> getCorrectGuesses() {
-        return correctGuesses;
+    public List<String> getHitLocations() {
+        return hitLocations;
     }
 
-    public void setCorrectGuesses(List<String> correctGuesses) {
-        this.correctGuesses = correctGuesses;
+    public void setHitLocations(List<String> correctGuesses) {
+        this.hitLocations = correctGuesses;
     }
 
-    public List<String> getIncorrectGuesses() {
-        return incorrectGuesses;
+    public void addHitLocation(String hitLocation){
+        this.hitLocations.add(hitLocation);
     }
 
-    public void setIncorrectGuesses(List<String> incorrectGuesses) {
-        this.incorrectGuesses = incorrectGuesses;
+    public List<String> getMissLocations() {
+        return missLocations;
+    }
+
+    public void setMissLocations(List<String> missLocations) {
+        this.missLocations = missLocations;
+    }
+
+    public void addMissLocation(String missLocation){
+        missLocations.add(missLocation);
     }
 
     public ArrayList<Ship> getShips() {
@@ -58,7 +66,7 @@ public abstract class Player {
 
     //TODO: these two methods need to be removed and placed in a service method.
     public boolean hasGuessed(String guess){
-        return correctGuesses.contains(guess) && incorrectGuesses.contains(guess);
+        return hitLocations.contains(guess) && missLocations.contains(guess);
     }
 
     public String getBoardValue(int y, int x){

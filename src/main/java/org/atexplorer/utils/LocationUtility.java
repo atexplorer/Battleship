@@ -1,6 +1,8 @@
 package org.atexplorer.utils;
 
 import org.atexplorer.Controller;
+import org.atexplorer.entity.Player;
+import org.atexplorer.piece.Ship;
 
 public class LocationUtility {
 
@@ -21,5 +23,16 @@ public class LocationUtility {
 
     public static int getNumericLocation(String alphaLocation){
         return getX(alphaLocation)*10 + getY(alphaLocation);
+    }
+
+    public static boolean locationCollision(String inputLocation, Player player){
+        for(Ship ship : player.getShips()){
+            for(String location : ship.getPositions()){
+                if(location.equals(inputLocation)){
+                    return true;
+                }
+            }
+        }
+        return false;
     }
 }
