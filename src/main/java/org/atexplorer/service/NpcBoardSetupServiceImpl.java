@@ -7,12 +7,11 @@ import org.atexplorer.piece.Orientation;
 import org.atexplorer.piece.ShipTypes;
 import org.atexplorer.utils.LocationUtility;
 
-import javax.swing.text.Utilities;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Random;
 
-public class NpcBoardSetupImpl extends BoardSetupServiceImpl{
+public class NpcBoardSetupServiceImpl extends BoardSetupServiceImpl{
 
     @Override
     public boolean setPiece(PlaceShipAction psa) {
@@ -35,8 +34,8 @@ public class NpcBoardSetupImpl extends BoardSetupServiceImpl{
 
     private PlaceShipAction generateNpcShipAction(Player player, ShipTypes shipType, Random random, ArrayList<Orientation> orientations){
         return new PlaceShipAction(player,
-                shipType.getName(),
                 LocationUtility.getAlphaLocation(random.nextInt(Controller.COLUMNS * Controller.ROWS)),
+                shipType.getName(),
                 orientations.get(random.nextInt(orientations.size())).name());
     }
 }

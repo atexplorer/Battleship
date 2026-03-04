@@ -5,12 +5,12 @@ import org.atexplorer.Controller;
 public class LocationUtility {
 
     public static int getX(String location){
-        String[] cords = location.split("");
+        String[] cords = location.split("",2);
         return Integer.parseInt(cords[1])-1;
     }
 
     public static int getY(String location){
-        String[] cords = location.split("");
+        String[] cords = location.split("",2);
         return cords[0].charAt(0) - 65;
     }
 
