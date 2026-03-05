@@ -10,10 +10,6 @@ public class GuessServiceImpl implements GuessService{
         Player defendingPlayer = ga.player();
         String guess = ga.location();
 
-        if(alreadyGuessed(defendingPlayer, guess)){
-            return false;
-        }
-
         if(LocationUtility.locationCollision(guess, defendingPlayer)){
             defendingPlayer.addHitLocation(guess);
             return true;
@@ -23,7 +19,8 @@ public class GuessServiceImpl implements GuessService{
         }
     }
 
-    private boolean alreadyGuessed(Player player, String guess){
-        return player.getMissLocations().contains(guess) || player.getHitLocations().contains(guess);
+    @Override
+    public boolean alreadyGuessed(GuessAction ga){
+        return ga.player().getMissLocations().contains(ga.location()) || ga.player().getHitLocations().contains(ga.location());
     }
 }

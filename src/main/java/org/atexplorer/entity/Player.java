@@ -7,10 +7,10 @@ import java.util.List;
 
 public abstract class Player {
 
-    private String name;
-    private List<String> hitLocations;
-    private List<String> missLocations;
-    private ArrayList<Ship> ships;
+    private final String name;
+    private final List<String> hitLocations;
+    private final List<String> missLocations;
+    private final ArrayList<Ship> ships;
     private final String[][] board;
 
     public Player(String name){
@@ -25,20 +25,12 @@ public abstract class Player {
         return hitLocations;
     }
 
-    public void setHitLocations(List<String> correctGuesses) {
-        this.hitLocations = correctGuesses;
-    }
-
     public void addHitLocation(String hitLocation){
         this.hitLocations.add(hitLocation);
     }
 
     public List<String> getMissLocations() {
         return missLocations;
-    }
-
-    public void setMissLocations(List<String> missLocations) {
-        this.missLocations = missLocations;
     }
 
     public void addMissLocation(String missLocation){
@@ -49,24 +41,22 @@ public abstract class Player {
         return ships;
     }
 
-    public void setShips(ArrayList<Ship> ships) {
-        this.ships = ships;
-    }
-
     public void addShip(Ship ship){this.ships.add(ship);}
 
     public String[][] getBoard() {
         return board;
     }
 
+    public String getName() {
+        return name;
+    }
+
     public int shipsLeft(){
         return this.ships.size();
     }
 
-
-    //TODO: these two methods need to be removed and placed in a service method.
-    public boolean hasGuessed(String guess){
-        return hitLocations.contains(guess) && missLocations.contains(guess);
+    public void setBoardValue(String val, int y, int x){
+        board[y][x] = val;
     }
 
     public String getBoardValue(int y, int x){

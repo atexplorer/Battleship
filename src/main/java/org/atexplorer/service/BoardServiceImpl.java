@@ -43,7 +43,7 @@ public class BoardServiceImpl implements BoardService {
     }
 
     @Override
-    public boolean removePiece(GuessAction ga) {
+    public ShipTypes removePiece(GuessAction ga) {
         ArrayList<Ship> ships = ga.player().getShips();
 
         for(Ship ship : ships){
@@ -53,7 +53,7 @@ public class BoardServiceImpl implements BoardService {
                 }
             }
         }
-        return false;
+        return null;
     }
 
     private String[] generateLocationsArray(int anchorLocation, Orientation orientation, int shipLength){
