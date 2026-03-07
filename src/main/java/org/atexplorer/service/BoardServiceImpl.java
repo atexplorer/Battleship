@@ -12,6 +12,7 @@ import org.atexplorer.utils.LocationUtility;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import static org.atexplorer.utils.LocationUtility.locationCollision;
 
@@ -42,19 +43,29 @@ public class BoardServiceImpl implements BoardService {
         return true;
     }
 
+    //I feel like two things are happening here:
+    //1. it removes the matching location from the ship array if it exists (we already know it does if this is called)
+    //2. it then checks if the unhit positions is equal to 0, if it is then it removes it from the player's ship array
     @Override
-    public ShipTypes removePiece(GuessAction ga) {
-        ArrayList<Ship> ships = ga.player().getShips();
+    public boolean removePiece(Player player, String location) {
+        for(Ship ship : player.getShips()){
+            if(Arrays.asList(ship.getPositions()).contains(location)){
+                ship.setPositions(reduceArray(ship.getPositions(), location));
 
-        for(Ship ship : ships){
-            for(String loc : ship.getPositions()){
-                if(loc.equals(ga.location())){
-
+                if(ship.getPositions().length == 0){
+                    player.removeShip(ship);
+                    return true;
                 }
+                break;
             }
         }
-        return null;
+        return false;
     }
+
+    public String[] reduceArray(String[] array, String removeVal){
+        return Arrays.stream(array).filter(s -> !s.equals(removeVal)).toArray(String[]::new);
+    }
+
 
     private String[] generateLocationsArray(int anchorLocation, Orientation orientation, int shipLength){
         int[] locations = new int[shipLength];
@@ -86,13 +97,5 @@ public class BoardServiceImpl implements BoardService {
         return false;
     }
 
-    private Ship getHitShip(List<Ship> ships, String location){
-        for(Ship ship : ships){
-            for(String loc : ship.getPositions()){
-                if(loc.equals(location)){
-                    return ship;
-                }
-            }
-        }
-    }
+
 }

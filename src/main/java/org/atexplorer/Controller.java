@@ -33,9 +33,10 @@ public class Controller {
     private GameState gameState;
 
     public Controller(){
-        this.guessService = new GuessServiceImpl();
+
         this.setupService = new PlayerSetupService();
         this.boardService = new BoardServiceImpl();
+        this.guessService = new GuessServiceImpl();
         this.gameState = GameState.SETUP;
         this.gameView = new GameView(this, ROWS, COLUMNS, player1, player2);
     }
@@ -72,12 +73,11 @@ public class Controller {
 
         String response;
 
+        //We don't need to provide a string here, If we use observer strategy the board can handle what to output
         if(guessService.guess(ga)){
-            ShipTypes shipType;
-            if((shipType = boardService.removePiece(ga)) != null){
-                response = "You sunk my " + shipType.getName() + "!";
-            }else{
-                response = ga.location() + " is a hit!";
+            response = ga.location() + " is a hit!";
+            if(boardService.removePiece(ga.player(), ga.location())){
+                gameState = endGameCheck(ga.player());
             }
         }else{
             response = ga.location() + " is a miss...";
@@ -88,6 +88,10 @@ public class Controller {
 
     private boolean shipListComplete(Player player){
         return player.getShips().size() == ShipTypes.values().length;
+    }
+
+    private GameState endGameCheck(Player player){
+        return player.shipsLeft() == 0 ? GameState.FINISHED : GameState.PLAYING;
     }
 
 
