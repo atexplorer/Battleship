@@ -5,4 +5,5 @@ import org.atexplorer.dto.GuessAction;
 public interface GuessService {
 
     boolean guess(GuessAction ga);
+    boolean alreadyGuessed(GuessAction ga);
 }

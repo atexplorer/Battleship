@@ -8,10 +8,7 @@ import org.atexplorer.entity.Player;
 import org.atexplorer.gui.*;
 import org.atexplorer.piece.Ship;
 import org.atexplorer.piece.ShipTypes;
-import org.atexplorer.service.BoardSetupService;
-import org.atexplorer.service.BoardSetupServiceImpl;
-import org.atexplorer.service.PlayerSetupService;
-
+import org.atexplorer.service.*;
 
 
 public class Controller {
@@ -23,7 +20,8 @@ public class Controller {
     }
 
     private final PlayerSetupService setupService;
-    private BoardSetupService boardSetupService;
+    private BoardService boardService;
+    private GuessService guessService;
 
     public static final int ROWS = 10;
     public static final int COLUMNS = 10;
@@ -35,7 +33,10 @@ public class Controller {
     private GameState gameState;
 
     public Controller(){
+
         this.setupService = new PlayerSetupService();
+        this.boardService = new BoardServiceImpl();
+        this.guessService = new GuessServiceImpl();
         this.gameState = GameState.SETUP;
         this.gameView = new GameView(this, ROWS, COLUMNS, player1, player2);
     }
@@ -49,34 +50,48 @@ public class Controller {
         }
     }
 
-    //Todo: need to create a separate method that will handle each playerAction
+    //Returning a String feels a little too "coding to an implementation" may want to reconsider
+    //although, I could have it return a string, just not add any variables. That may be a better option.
     public String processBoardAction(PlayerAction playerAction){
-        switch (playerAction){
+        return switch (playerAction){
             case PlaceShipAction psa -> {
-                boardSetupService = new BoardSetupServiceImpl();
                 //this is going to have to be a shared boolean with guess action
-                boolean success = boardSetupService.setPiece(psa);
+                if(boardService.setPiece(psa)){
+                    yield psa.shipName() + " has been placed.";
+                }else{
+                    yield "Failed to place " + psa.shipName();
+                }
             }
-            //Check if location had enemy piece, if enemy piece: check if any full ships have been sunk, tell board to update
-            case GuessAction ga -> System.out.println("Guess action passed to controller");
-        }
-
-        return "processed PlayerAction";
+            case GuessAction ga -> processGuess(ga);
+        };
     }
 
-    //Todo: this method isn't finished and needs to be set up to tell the view when to move to the next phase of the game
-    private boolean shipListComplete(Player player){
-        if(player.getShips().size() < ShipTypes.values().length){
-            return false;
+    private String processGuess(GuessAction ga){
+        if(guessService.alreadyGuessed(ga)){
+            return ga.location() + " has already been guessed.";
         }
 
-        for (Ship ship : player.getShips()){
-            if(ship.getPositions().length != ShipTypes.of(ship.getShipName()).getSize()){
-                return false;
+        String response;
+
+        //We don't need to provide a string here, If we use observer strategy the board can handle what to output
+        if(guessService.guess(ga)){
+            response = ga.location() + " is a hit!";
+            if(boardService.removePiece(ga.player(), ga.location())){
+                gameState = endGameCheck(ga.player());
             }
+        }else{
+            response = ga.location() + " is a miss...";
         }
 
-        return true;
+        return response;
+    }
+
+    private boolean shipListComplete(Player player){
+        return player.getShips().size() == ShipTypes.values().length;
+    }
+
+    private GameState endGameCheck(Player player){
+        return player.shipsLeft() == 0 ? GameState.FINISHED : GameState.PLAYING;
     }
 
 

@@ -7,58 +7,58 @@ import java.util.List;
 
 public abstract class Player {
 
-    private String name;
-    private List<String> correctGuesses;
-    private List<String> incorrectGuesses;
-    private ArrayList<Ship> ships;
+    private final String name;
+    private final List<String> hitLocations;
+    private final List<String> missLocations;
+    private final ArrayList<Ship> ships;
     private final String[][] board;
 
     public Player(String name){
         this.name = name;
         this.board = new String[10][10];
-        correctGuesses = new ArrayList<>();
-        incorrectGuesses = new ArrayList<>();
+        hitLocations = new ArrayList<>();
+        missLocations = new ArrayList<>();
         ships = new ArrayList<>();
     }
 
-    public List<String> getCorrectGuesses() {
-        return correctGuesses;
+    public List<String> getHitLocations() {
+        return hitLocations;
     }
 
-    public void setCorrectGuesses(List<String> correctGuesses) {
-        this.correctGuesses = correctGuesses;
+    public void addHitLocation(String hitLocation){
+        this.hitLocations.add(hitLocation);
     }
 
-    public List<String> getIncorrectGuesses() {
-        return incorrectGuesses;
+    public List<String> getMissLocations() {
+        return missLocations;
     }
 
-    public void setIncorrectGuesses(List<String> incorrectGuesses) {
-        this.incorrectGuesses = incorrectGuesses;
+    public void addMissLocation(String missLocation){
+        missLocations.add(missLocation);
     }
 
     public ArrayList<Ship> getShips() {
         return ships;
     }
 
-    public void setShips(ArrayList<Ship> ships) {
-        this.ships = ships;
-    }
-
     public void addShip(Ship ship){this.ships.add(ship);}
+
+    public void removeShip(Ship ship){this.ships.remove(ship);}
 
     public String[][] getBoard() {
         return board;
+    }
+
+    public String getName() {
+        return name;
     }
 
     public int shipsLeft(){
         return this.ships.size();
     }
 
-
-    //TODO: these two methods need to be removed and placed in a service method.
-    public boolean hasGuessed(String guess){
-        return correctGuesses.contains(guess) && incorrectGuesses.contains(guess);
+    public void setBoardValue(String val, int y, int x){
+        board[y][x] = val;
     }
 
     public String getBoardValue(int y, int x){

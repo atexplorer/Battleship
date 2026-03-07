@@ -11,7 +11,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Random;
 
-public class NpcBoardSetupServiceImpl extends BoardSetupServiceImpl{
+public class NpcBoardServiceImpl extends BoardServiceImpl {
 
     @Override
     public boolean setPiece(PlaceShipAction psa) {
