@@ -9,5 +9,4 @@ public interface BoardService {
 
     boolean setPiece(PlaceShipAction psa);
 
-    boolean removePiece(Player player, String location);
 }

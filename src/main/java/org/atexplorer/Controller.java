@@ -76,9 +76,7 @@ public class Controller {
         //We don't need to provide a string here, If we use observer strategy the board can handle what to output
         if(guessService.guess(ga)){
             response = ga.location() + " is a hit!";
-            if(boardService.removePiece(ga.player(), ga.location())){
-                gameState = endGameCheck(ga.player());
-            }
+            gameState = ga.player().allShipsSunk() ? GameState.FINISHED : GameState.PLAYING;
         }else{
             response = ga.location() + " is a miss...";
         }
