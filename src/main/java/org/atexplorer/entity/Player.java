@@ -1,53 +1,30 @@
 package org.atexplorer.entity;
 
 import org.atexplorer.piece.Ship;
+import org.atexplorer.piece.ShipTypes;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 public abstract class Player {
 
     private final String name;
-    private final List<String> hitLocations;
-    private final List<String> missLocations;
-    private final ArrayList<Ship> ships;
-    private final String[][] board;
+    private final Set<String> guessedLocations;
+    private final List<Ship> ships;
 
     public Player(String name){
         this.name = name;
-        this.board = new String[10][10];
-        hitLocations = new ArrayList<>();
-        missLocations = new ArrayList<>();
+        guessedLocations = new HashSet<>();
         ships = new ArrayList<>();
     }
 
-    public List<String> getHitLocations() {
-        return hitLocations;
-    }
-
-    public void addHitLocation(String hitLocation){
-        this.hitLocations.add(hitLocation);
-    }
-
-    public List<String> getMissLocations() {
-        return missLocations;
-    }
-
-    public void addMissLocation(String missLocation){
-        missLocations.add(missLocation);
-    }
-
-    public ArrayList<Ship> getShips() {
-        return ships;
+    public List<Ship> getShips() {
+        return List.copyOf(ships);
     }
 
     public void addShip(Ship ship){this.ships.add(ship);}
-
-    public void removeShip(Ship ship){this.ships.remove(ship);}
-
-    public String[][] getBoard() {
-        return board;
-    }
 
     public String getName() {
         return name;
@@ -57,12 +34,48 @@ public abstract class Player {
         return this.ships.size();
     }
 
-    public void setBoardValue(String val, int y, int x){
-        board[y][x] = val;
+    public boolean registerGuess(String location){
+        boolean hit = false;
+        for(Ship ship : ships){
+            if(ship.locationCollision(location)){
+                ship.registerHit(location);
+                hit = true;
+                break;
+            }
+        }
+        guessedLocations.add(location);
+        return hit;
     }
 
-    public String getBoardValue(int y, int x){
-        return board[y][x];
+    public boolean allShipsSunk(){
+        for(Ship ship : ships){
+            if(!ship.isSunk()){
+                return false;
+            }
+        }
+        return true;
+    }
+
+    public boolean alreadyGuessed(String location){
+        return guessedLocations.contains(location);
+    }
+
+    public boolean shipTypeCreated(ShipTypes shipType){
+        for(Ship ship: ships){
+            if (ship.getShipType().equals(shipType)){
+                return true;
+            }
+        }
+        return false;
+    }
+
+    public boolean isLocationOccupied(String location){
+        for(Ship ship : ships){
+            if(ship.locationCollision(location)){
+                return true;
+            }
+        }
+        return false;
     }
 
 

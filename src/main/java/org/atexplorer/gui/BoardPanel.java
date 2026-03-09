@@ -59,16 +59,16 @@ public class BoardPanel extends JPanel {
         return button;
     }
 
-    public void updateButton(String buttonName){
-        String[] splitName = buttonName.split("");
-        int y = Character.codePointOf(splitName[0]) - 64;
-        int x = Integer.parseInt(splitName[0]);
-        int buttonLocation = y * 11 + x;
-        JButton button = (JButton) this.getComponent(buttonLocation);
-
-        String boardValue = player.getBoardValue(y-1, x);
-        button.setText(boardValue);
-    }
+//    public void updateButton(String buttonName){
+//        String[] splitName = buttonName.split("");
+//        int y = Character.codePointOf(splitName[0]) - 64;
+//        int x = Integer.parseInt(splitName[0]);
+//        int buttonLocation = y * 11 + x;
+//        JButton button = (JButton) this.getComponent(buttonLocation);
+//
+//        String boardValue = player.getLocationValue(buttonName);
+//        button.setText(boardValue);
+//    }
 
     public void disableButtons(){
         for(Component c : this.getComponents()){

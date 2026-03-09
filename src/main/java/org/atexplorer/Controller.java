@@ -57,9 +57,9 @@ public class Controller {
             case PlaceShipAction psa -> {
                 //this is going to have to be a shared boolean with guess action
                 if(boardService.setPiece(psa)){
-                    yield psa.shipName() + " has been placed.";
+                    yield psa.shipType().getName() + " has been placed.";
                 }else{
-                    yield "Failed to place " + psa.shipName();
+                    yield "Failed to place " + psa.shipType().getName();
                 }
             }
             case GuessAction ga -> processGuess(ga);
@@ -76,9 +76,7 @@ public class Controller {
         //We don't need to provide a string here, If we use observer strategy the board can handle what to output
         if(guessService.guess(ga)){
             response = ga.location() + " is a hit!";
-            if(boardService.removePiece(ga.player(), ga.location())){
-                gameState = endGameCheck(ga.player());
-            }
+            gameState = ga.player().allShipsSunk() ? GameState.FINISHED : GameState.PLAYING;
         }else{
             response = ga.location() + " is a miss...";
         }
