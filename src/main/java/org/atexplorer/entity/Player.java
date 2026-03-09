@@ -1,6 +1,7 @@
 package org.atexplorer.entity;
 
 import org.atexplorer.piece.Ship;
+import org.atexplorer.piece.ShipTypes;
 
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -57,6 +58,24 @@ public abstract class Player {
 
     public boolean alreadyGuessed(String location){
         return guessedLocations.contains(location);
+    }
+
+    public boolean shipTypeCreated(ShipTypes shipType){
+        for(Ship ship: ships){
+            if (ship.getShipType().equals(shipType)){
+                return true;
+            }
+        }
+        return false;
+    }
+
+    public boolean isLocationOccupied(String location){
+        for(Ship ship : ships){
+            if(ship.locationCollision(location)){
+                return true;
+            }
+        }
+        return false;
     }
 
 

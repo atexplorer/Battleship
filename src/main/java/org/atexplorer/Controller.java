@@ -57,9 +57,9 @@ public class Controller {
             case PlaceShipAction psa -> {
                 //this is going to have to be a shared boolean with guess action
                 if(boardService.setPiece(psa)){
-                    yield psa.shipName() + " has been placed.";
+                    yield psa.shipType().getName() + " has been placed.";
                 }else{
-                    yield "Failed to place " + psa.shipName();
+                    yield "Failed to place " + psa.shipType().getName();
                 }
             }
             case GuessAction ga -> processGuess(ga);
