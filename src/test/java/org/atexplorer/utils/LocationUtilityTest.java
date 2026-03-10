@@ -26,6 +26,12 @@ public class LocationUtilityTest {
     @Test
     void testGetNumericLocation(){
         int numericLocation = LocationUtility.getNumericLocation("F7");
-        assertEquals(65, numericLocation);
+        assertEquals(56, numericLocation);
+    }
+
+    @Test
+    void testGetNumericLocation_zero(){
+        int numericLocation = LocationUtility.getNumericLocation("A1");
+        assertEquals(0, numericLocation);
     }
 }

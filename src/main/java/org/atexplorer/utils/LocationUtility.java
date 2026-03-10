@@ -15,12 +15,12 @@ public class LocationUtility {
     }
 
     public static String getAlphaLocation(int numericLocation){
-        String character = String.valueOf(((char) (numericLocation % Controller.COLUMNS + 65)));
-        return  character + (numericLocation / Controller.ROWS + 1);
+        String character = String.valueOf(((char) (numericLocation / Controller.COLUMNS + 65)));
+        return  character + (numericLocation % Controller.ROWS + 1);
     }
 
     public static int getNumericLocation(String alphaLocation){
-        return getX(alphaLocation)*10 + getY(alphaLocation);
+        return getX(alphaLocation) + getY(alphaLocation)*10;
     }
 
 }
