@@ -54,11 +54,15 @@ public class BoardServiceImpl implements BoardService {
         int numericLocation = LocationUtility.getNumericLocation(anchorLocation);
         int endLocation = numericLocation + (shipLength-1) * orientation.getInterval();
 
-        return switch (orientation){
-            case Orientation.UP -> endLocation >= 0;
-            case Orientation.LEFT, Orientation.RIGHT -> (endLocation/ Controller.COLUMNS) == (numericLocation/Controller.COLUMNS);
-            case Orientation.DOWN -> endLocation < (Controller.ROWS * Controller.COLUMNS);
-        };
+        if(endLocation < 0 || endLocation > Controller.ROWS * Controller.COLUMNS){
+            return false;
+        }
+
+        if(orientation.equals(Orientation.LEFT) || orientation.equals(Orientation.RIGHT)){
+            return (endLocation/ Controller.COLUMNS) == (numericLocation/Controller.COLUMNS);
+        }
+
+        return true;
     }
 
 
