@@ -76,4 +76,8 @@ public class GameView {
     public void guessLocation(String location){
 
     }
+
+    public void postMessage(String message){
+        textArea.append(message + "\n");
+    }
 }

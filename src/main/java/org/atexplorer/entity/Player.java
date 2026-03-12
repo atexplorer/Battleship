@@ -8,7 +8,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-public abstract class Player {
+public abstract sealed class Player permits Npc, HumanPlayer{
 
     private final String name;
     private final Set<String> guessedLocations;

@@ -1,6 +1,6 @@
 package org.atexplorer.entity;
 
-public class Npc extends Player{
+public final class Npc extends Player{
     private NpcDifficulty difficulty;
 
     public Npc(NpcDifficulty difficulty){

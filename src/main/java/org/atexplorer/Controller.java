@@ -4,6 +4,8 @@ import org.atexplorer.dto.GuessAction;
 import org.atexplorer.dto.PlaceShipAction;
 import org.atexplorer.dto.PlayerAction;
 import org.atexplorer.dto.PlayerInitAction;
+import org.atexplorer.entity.HumanPlayer;
+import org.atexplorer.entity.Npc;
 import org.atexplorer.entity.Player;
 import org.atexplorer.gui.*;
 import org.atexplorer.piece.Ship;
@@ -21,7 +23,7 @@ public class Controller {
 
     private final PlayerSetupService setupService;
     private BoardService boardService;
-    private GuessService guessService;
+    private final GuessService guessService;
 
     public static final int ROWS = 10;
     public static final int COLUMNS = 10;
@@ -33,64 +35,55 @@ public class Controller {
     private GameState gameState;
 
     public Controller(){
-
         this.setupService = new PlayerSetupService();
-        this.boardService = new BoardServiceImpl();
         this.guessService = new GuessServiceImpl();
         this.gameState = GameState.SETUP;
         this.gameView = new GameView(this, ROWS, COLUMNS, player1, player2);
     }
 
-    //This method will handle setting up player objects that will be used by the Game view
-    public void initializePlayer(PlayerInitAction playerInitAction){
-        if(player1 == null){
-            player1 = setupService.setupPlayer(playerInitAction);
-        }else{
-            player2 = setupService.setupPlayer(playerInitAction);
+    public boolean initializePlayer(PlayerInitAction playerInitAction){
+        Player player = setupService.setupPlayer(playerInitAction);
+
+        if(player == null){
+            return false;
         }
+
+        switch (player){
+            case Npc npc -> {
+                boardService = new NpcBoardServiceImpl();
+                boardService.setPiece(new PlaceShipAction(npc, null, null, null));
+            }
+            case HumanPlayer _ -> boardService = new BoardServiceImpl();
+        }
+
+        if(player1 == null){
+            player1 = player;
+        }else{
+            player2 = player;
+        }
+
+        return true;
     }
 
-    //Returning a String feels a little too "coding to an implementation" may want to reconsider
-    //although, I could have it return a string, just not add any variables. That may be a better option.
-    public String processBoardAction(PlayerAction playerAction){
+    //Instead of returning a string, we will have the processBoardAction return a boolean to let the user know if the action was successful
+    //Alternatively we could return a DTO letting the user know what the action failed
+    public boolean processBoardAction(PlayerAction playerAction){
         return switch (playerAction){
-            case PlaceShipAction psa -> {
-                //this is going to have to be a shared boolean with guess action
-                if(boardService.setPiece(psa)){
-                    yield psa.shipType().getName() + " has been placed.";
-                }else{
-                    yield "Failed to place " + psa.shipType().getName();
-                }
-            }
+            case PlaceShipAction psa -> boardService.setPiece(psa);
             case GuessAction ga -> processGuess(ga);
         };
     }
 
-    private String processGuess(GuessAction ga){
+    private boolean processGuess(GuessAction ga){
         if(guessService.alreadyGuessed(ga)){
-            return ga.location() + " has already been guessed.";
+            return false;
         }
 
-        String response;
-
-        //We don't need to provide a string here, If we use observer strategy the board can handle what to output
         if(guessService.guess(ga)){
-            response = ga.location() + " is a hit!";
             gameState = ga.player().allShipsSunk() ? GameState.FINISHED : GameState.PLAYING;
-        }else{
-            response = ga.location() + " is a miss...";
         }
 
-        return response;
+        return true;
     }
-
-    private boolean shipListComplete(Player player){
-        return player.getShips().size() == ShipTypes.values().length;
-    }
-
-    private GameState endGameCheck(Player player){
-        return player.shipsLeft() == 0 ? GameState.FINISHED : GameState.PLAYING;
-    }
-
 
 }
