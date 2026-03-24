@@ -5,7 +5,7 @@ import java.awt.image.BufferedImage;
 
 public class ImageUtility {
 
-    public BufferedImage scaledImage (BufferedImage original, int width, int height, boolean hasTransparency){
+    public static BufferedImage scaledImage (BufferedImage original, int width, int height, boolean hasTransparency){
 
         int imageType = hasTransparency ? BufferedImage.TYPE_INT_ARGB : BufferedImage.TYPE_INT_RGB;
 

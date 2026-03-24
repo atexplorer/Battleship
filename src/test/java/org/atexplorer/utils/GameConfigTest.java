@@ -1,7 +1,6 @@
 package org.atexplorer.utils;
 
 import org.junit.jupiter.api.BeforeAll;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -22,12 +21,12 @@ class GameConfigTest {
 
     @Test
     void getScreenWidth() {
-        assertEquals(1024, gc.getScreenWidth());
+        assertEquals(1024, gc.getMaxScreenWidth());
     }
 
     @Test
     void getScreenHeight() {
-        assertEquals(768, gc.getScreenHeight());
+        assertEquals(768, gc.getMaxScreenHeight());
     }
 
     @Test

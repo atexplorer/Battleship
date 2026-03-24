@@ -1,6 +1,5 @@
 package org.atexplorer.utils;
 
-import java.io.FileInputStream;
 import java.io.InputStream;
 import java.util.Properties;
 
@@ -16,8 +15,9 @@ public class GameConfig {
         }
 
         properties.setProperty("tileSize", setTileSize());
-        properties.setProperty("screenWidth", setScreenWidth());
-        properties.setProperty("screenHeight", setScreenHeight());
+        properties.setProperty("screenMaxWidth", setScreenWidth());
+        properties.setProperty("screenMaxHeight", setScreenHeight());
+
 
     }
 
@@ -30,8 +30,8 @@ public class GameConfig {
                 Integer.parseInt(properties.getProperty("scale")));
     }
 
-    public int getScreenWidth(){
-        return Integer.parseInt(properties.getProperty("screenWidth"));
+    public int getMaxScreenWidth(){
+        return Integer.parseInt(properties.getProperty("screenMaxWidth"));
     }
 
     private String setScreenWidth(){
@@ -39,8 +39,8 @@ public class GameConfig {
                 Integer.parseInt(properties.getProperty("maxScreenColumn")));
     }
 
-    public int getScreenHeight(){
-        return Integer.parseInt(properties.getProperty("screenHeight"));
+    public int getMaxScreenHeight(){
+        return Integer.parseInt(properties.getProperty("screenMaxHeight"));
     }
 
     private String setScreenHeight(){
@@ -50,5 +50,12 @@ public class GameConfig {
 
     public int getFps(){
         return Integer.parseInt(properties.getProperty("fps"));
+    }
+
+    public int getScreenRowCount(){
+        return Integer.parseInt(properties.getProperty("maxScreenRow"));
+    }
+    public int getScreenColumnCount(){
+        return Integer.parseInt(properties.getProperty("maxScreenColumn"));
     }
 }

@@ -1,22 +1,33 @@
 package org.atexplorer.gui;
 
+import org.atexplorer.tile.TileManager;
 import org.atexplorer.utils.GameConfig;
+import org.atexplorer.entity.Box;
 
 import javax.swing.*;
 import java.awt.*;
 
-public class GamePanel extends JPanel implements Runnable{
+public class GamePanel extends JPanel implements Runnable {
 
     private final GameConfig gc;
     private Thread gameThread;
 
+    private final Box box;
+    private final TileManager tileManager;
+
     public GamePanel(){
         gc = new GameConfig();
         gc.loadConfig("board.properties");
-        this.setPreferredSize(new Dimension(gc.getScreenWidth(), gc.getScreenHeight()));
+        this.setPreferredSize(new Dimension(gc.getMaxScreenWidth(), gc.getMaxScreenHeight()));
         this.setBackground(Color.black);
         this.setDoubleBuffered(true);
         this.setFocusable(true);
+
+        box = new Box(gc);
+        addMouseListener(box);
+        addMouseMotionListener(box);
+
+        this.tileManager = new TileManager(gc);
     }
 
     public void startGameThread(){
@@ -34,28 +45,42 @@ public class GamePanel extends JPanel implements Runnable{
         long timer = 0;
         int drawCount = 0;
 
-//        while(gameThread != null){
-//            currentTime = System.nanoTime();
-//            delta += (currentTime - lastTime) / drawInterval;
-//            timer += (currentTime - lastTime);
-//            lastTime = currentTime;
-//
-//            if (delta >= 1){
-//                update();
-//                repaint();
-//
-//                delta--;
-//                drawCount++;
-//            }
-//
-//            if(timer >= 1000000000){
-//                System.out.println("FPS: " + drawCount);
-//                drawCount=0;
-//                timer=0;
-//            }
-//        }
+        while(gameThread != null){
+            currentTime = System.nanoTime();
+            delta += (currentTime - lastTime) / drawInterval;
+            timer += (currentTime - lastTime);
+            lastTime = currentTime;
+
+            if (delta >= 1){
+                //update();
+                repaint();
+
+                delta--;
+                drawCount++;
+            }
+
+            if(timer >= 1000000000){
+                System.out.println("FPS: " + drawCount);
+                drawCount=0;
+                timer=0;
+            }
+        }
 
     }
 
+    private void update(){
+
+    }
+
+    public void paintComponent(Graphics g){
+        super.paintComponent(g);
+
+        Graphics2D g2 = (Graphics2D) g;
+
+        tileManager.draw(g2);
+
+        box.draw(g2);
+
+    }
 
 }
