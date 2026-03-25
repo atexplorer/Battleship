@@ -1,5 +1,6 @@
 package org.atexplorer.entity;
 
+import org.atexplorer.gui.GamePanel;
 import org.atexplorer.utils.GameConfig;
 import org.atexplorer.utils.ImageUtility;
 
@@ -15,6 +16,7 @@ import java.util.Objects;
 public class Box implements MouseListener, MouseMotionListener {
 
     private BufferedImage box;
+    private GamePanel gp;
     private GameConfig gc;
 
     private int screenX;
@@ -24,10 +26,15 @@ public class Box implements MouseListener, MouseMotionListener {
 
     private boolean moveable = false;
 
-    public Box(GameConfig gc){
+    public Box(GamePanel gp, GameConfig gc){
         this.gc = gc;
+        this.gp = gp;
+
         screenX = gc.getMaxScreenWidth()/2 - gc.getTileSize();
         screenY = gc.getMaxScreenHeight()/2 - gc.getTileSize();
+
+        gp.addMouseMotionListener(this);
+        gp.addMouseListener(this);
 
         box = loadImage(gc.getTileSize(), gc.getTileSize());
     }
@@ -77,18 +84,32 @@ public class Box implements MouseListener, MouseMotionListener {
     }
 
     private void snapToLocation(){
-        screenX = screenX/gc.getTileSize() * gc.getTileSize();
+
+
         if(screenX > gc.getMaxScreenWidth()){
             screenX = gc.getMaxScreenWidth() - gc.getTileSize();
         }else if(screenX < 0){
             screenX = 0;
+        }else{
+            if(screenX%gc.getTileSize() > (gc.getTileSize()/2) ){
+                screenX = (screenX/gc.getTileSize() + 1) * gc.getTileSize();
+            }else {
+                screenX = screenX/gc.getTileSize() * gc.getTileSize();
+            }
         }
-        screenY = screenY/ gc.getTileSize() * gc.getTileSize();
+
+
 
         if(screenY > gc.getMaxScreenHeight()){
             screenY = gc.getMaxScreenHeight() - gc.getTileSize();
         }else if (screenY < 0){
             screenY = 0;
+        }else {
+            if(screenY%gc.getTileSize() > (gc.getTileSize()/2) ){
+                screenY = (screenY/gc.getTileSize() + 1) * gc.getTileSize();
+            }else {
+                screenY = screenY/gc.getTileSize() * gc.getTileSize();
+            }
         }
     }
 

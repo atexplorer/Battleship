@@ -23,9 +23,7 @@ public class GamePanel extends JPanel implements Runnable {
         this.setDoubleBuffered(true);
         this.setFocusable(true);
 
-        box = new Box(gc);
-        addMouseListener(box);
-        addMouseMotionListener(box);
+        box = new Box(this, gc);
 
         this.tileManager = new TileManager(gc);
     }

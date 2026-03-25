@@ -5,9 +5,11 @@ import java.awt.image.BufferedImage;
 public class Tile {
 
     private BufferedImage tile;
+    private final boolean selectable;
 
-    public Tile(BufferedImage tile){
+    public Tile(BufferedImage tile, boolean selectable){
         this.tile = tile;
+        this.selectable = selectable;
     }
 
     public BufferedImage getTile() {
@@ -16,5 +18,9 @@ public class Tile {
 
     public void setTile(BufferedImage tile) {
         this.tile = tile;
+    }
+
+    public boolean isSelectable() {
+        return selectable;
     }
 }
