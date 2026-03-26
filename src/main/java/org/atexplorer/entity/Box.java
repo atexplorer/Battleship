@@ -11,13 +11,16 @@ import java.awt.event.MouseListener;
 import java.awt.event.MouseMotionListener;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
+import java.util.ArrayDeque;
 import java.util.Objects;
+import java.util.Queue;
 
 public class Box implements MouseListener, MouseMotionListener {
 
-    private BufferedImage box;
-    private GamePanel gp;
-    private GameConfig gc;
+    private BufferedImage activeImage;
+    private final Queue<BufferedImage> images;
+    private final GamePanel gp;
+    private final GameConfig gc;
 
     private int screenX;
     private int screenY;
@@ -26,9 +29,12 @@ public class Box implements MouseListener, MouseMotionListener {
 
     private boolean moveable = false;
 
+    private String[] fileNames = new String[]{"RedSquare","GreenSquare"};
+
     public Box(GamePanel gp, GameConfig gc){
         this.gc = gc;
         this.gp = gp;
+        this.images = new ArrayDeque<>();
 
         screenX = gc.getMaxScreenWidth()/2 - gc.getTileSize();
         screenY = gc.getMaxScreenHeight()/2 - gc.getTileSize();
@@ -36,23 +42,23 @@ public class Box implements MouseListener, MouseMotionListener {
         gp.addMouseMotionListener(this);
         gp.addMouseListener(this);
 
-        box = loadImage(gc.getTileSize(), gc.getTileSize());
+        for(String fileName : fileNames){
+            loadImage(fileName, gc.getTileSize(), gc.getTileSize());
+        }
+        activeImage = images.poll();
     }
 
-    private BufferedImage loadImage(int height, int width){
-        BufferedImage bufferedImage = null;
+    private void loadImage(String fileName, int height, int width){
         try{
-            bufferedImage = ImageIO.read(Objects.requireNonNull(getClass().getResourceAsStream("/tiles/RedSquare.png")));
-            bufferedImage = ImageUtility.scaledImage(bufferedImage, width, height, false);
+            BufferedImage bufferedImage = ImageIO.read(Objects.requireNonNull(getClass().getResourceAsStream("/tiles/" + fileName + ".png")));
+            images.add(ImageUtility.scaledImage(bufferedImage, width, height, false));
         }catch (IOException e){
             e.printStackTrace();
         }
-
-        return bufferedImage;
     }
 
     public void draw(Graphics2D g2){
-        g2.drawImage(box, screenX, screenY, null);
+        g2.drawImage(activeImage, screenX, screenY, null);
     }
 
     public void update(){
@@ -61,13 +67,14 @@ public class Box implements MouseListener, MouseMotionListener {
 
     @Override
     public void mouseClicked(MouseEvent e) {
-
+        System.out.println("clicked");
+        images.add(activeImage);
+        activeImage=images.poll();
     }
 
     @Override
     public void mousePressed(MouseEvent e) {
         if(inImage(e.getX(), e.getY())) {
-            System.out.println("Why are you holding me");
             xDif = e.getX() - screenX;
             yDif = e.getY() -screenY;
             moveable = true;
@@ -77,8 +84,8 @@ public class Box implements MouseListener, MouseMotionListener {
     @Override
     public void mouseReleased(MouseEvent e) {
         if(inImage(e.getX(), e.getY())) {
-            System.out.println("Thank you for letting go");
             moveable = false;
+            //This is where we would call the GamePanel to determine if this is a valid location or not.
             snapToLocation();
         }
     }
