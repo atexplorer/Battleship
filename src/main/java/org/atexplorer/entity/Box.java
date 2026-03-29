@@ -36,8 +36,8 @@ public class Box implements MouseListener, MouseMotionListener {
         this.gp = gp;
         this.images = new ArrayDeque<>();
 
-        screenX = gc.getMaxScreenWidth()/2 - gc.getTileSize();
-        screenY = gc.getMaxScreenHeight()/2 - gc.getTileSize();
+        //Todo: Each ship will need a default setter method, to set default screenX and screenY
+        setDefaultLocation();
 
         gp.addMouseMotionListener(this);
         gp.addMouseListener(this);
@@ -67,9 +67,11 @@ public class Box implements MouseListener, MouseMotionListener {
 
     @Override
     public void mouseClicked(MouseEvent e) {
-        System.out.println("clicked");
-        images.add(activeImage);
-        activeImage=images.poll();
+        if(inImage(e.getX(), e.getY())){
+            System.out.println("clicked");
+            images.add(activeImage);
+            activeImage = images.poll();
+        }
     }
 
     @Override
@@ -83,41 +85,22 @@ public class Box implements MouseListener, MouseMotionListener {
 
     @Override
     public void mouseReleased(MouseEvent e) {
-        if(inImage(e.getX(), e.getY())) {
-            moveable = false;
-            //This is where we would call the GamePanel to determine if this is a valid location or not.
-            snapToLocation();
+        moveable = false;
+        int horizontalCord = screenX%gc.getTileSize() > (gc.getTileSize()/2) ? (screenX/gc.getTileSize() + 1) : screenX/gc.getTileSize();
+        int verticalCord = screenY%gc.getTileSize() > (gc.getTileSize()/2) ? (screenY/gc.getTileSize() + 1) : screenY/gc.getTileSize();
+
+        if(gp.validPlayerShipLocation(horizontalCord, verticalCord)){
+            screenX = horizontalCord * gc.getTileSize();
+            screenY = verticalCord * gc.getTileSize();
+        }else{
+            setDefaultLocation();
         }
     }
 
-    private void snapToLocation(){
-
-
-        if(screenX > gc.getMaxScreenWidth()){
-            screenX = gc.getMaxScreenWidth() - gc.getTileSize();
-        }else if(screenX < 0){
-            screenX = 0;
-        }else{
-            if(screenX%gc.getTileSize() > (gc.getTileSize()/2) ){
-                screenX = (screenX/gc.getTileSize() + 1) * gc.getTileSize();
-            }else {
-                screenX = screenX/gc.getTileSize() * gc.getTileSize();
-            }
-        }
-
-
-
-        if(screenY > gc.getMaxScreenHeight()){
-            screenY = gc.getMaxScreenHeight() - gc.getTileSize();
-        }else if (screenY < 0){
-            screenY = 0;
-        }else {
-            if(screenY%gc.getTileSize() > (gc.getTileSize()/2) ){
-                screenY = (screenY/gc.getTileSize() + 1) * gc.getTileSize();
-            }else {
-                screenY = screenY/gc.getTileSize() * gc.getTileSize();
-            }
-        }
+    //Todo: this will need to get the default value from the ship it represents
+    private void setDefaultLocation(){
+        screenX = 25*gc.getTileSize();
+        screenY = 12*gc.getTileSize();
     }
 
     @Override
@@ -134,12 +117,24 @@ public class Box implements MouseListener, MouseMotionListener {
         return x >= screenX && x <= screenX + gc.getTileSize() && y >= screenY && y<= screenY + gc.getTileSize();
     }
 
-
+    //Todo: this will have to accommodate the size and orientation of the ships
     @Override
     public void mouseDragged(MouseEvent e) {
         if(moveable){
             screenX = e.getX() - xDif;
             screenY = e.getY() - yDif;
+
+            if(screenX > gc.getMaxScreenWidth() - gc.getTileSize()){
+                screenX = gc.getMaxScreenWidth() - gc.getTileSize();
+            }else if(screenX < 0){
+                screenX = 0;
+            }
+
+            if(screenY > gc.getMaxScreenHeight() - gc.getTileSize()){
+                screenY = gc.getMaxScreenHeight() - gc.getTileSize();
+            }else if (screenY < 0){
+                screenY = 0;
+            }
         }
     }
 

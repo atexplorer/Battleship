@@ -81,4 +81,10 @@ public class GamePanel extends JPanel implements Runnable {
 
     }
 
+    //TODO: This will also verify that no other ship occupies this space
+    public boolean validPlayerShipLocation(int horizontalCord, int verticalCord){
+        return tileManager.isPlayerLocation(horizontalCord, verticalCord);
+    }
+
+
 }

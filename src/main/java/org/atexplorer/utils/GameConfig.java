@@ -55,6 +55,7 @@ public class GameConfig {
     public int getScreenRowCount(){
         return Integer.parseInt(properties.getProperty("maxScreenRow"));
     }
+
     public int getScreenColumnCount(){
         return Integer.parseInt(properties.getProperty("maxScreenColumn"));
     }
