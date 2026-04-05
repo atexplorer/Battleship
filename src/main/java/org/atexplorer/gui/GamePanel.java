@@ -14,6 +14,7 @@ public class GamePanel extends JPanel implements Runnable {
 
     private final Box box;
     private final TileManager tileManager;
+    private final MouseHandler mouseHandler;
 
     public GamePanel(){
         gc = new GameConfig();
@@ -23,7 +24,12 @@ public class GamePanel extends JPanel implements Runnable {
         this.setDoubleBuffered(true);
         this.setFocusable(true);
 
-        box = new Box(this, gc);
+        this.mouseHandler = new MouseHandler();
+        this.addMouseListener(mouseHandler);
+        this.addMouseMotionListener(mouseHandler);
+
+        box = new Box(gc);
+        mouseHandler.addObserver(box);
 
         this.tileManager = new TileManager(gc);
     }
