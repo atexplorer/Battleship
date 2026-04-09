@@ -1,5 +1,6 @@
 package org.atexplorer.gui;
 
+import org.atexplorer.piece.Ships;
 import org.atexplorer.tile.TileManager;
 import org.atexplorer.utils.GameConfig;
 import org.atexplorer.entity.Box;
@@ -28,7 +29,7 @@ public class GamePanel extends JPanel implements Runnable {
         this.addMouseListener(mouseHandler);
         this.addMouseMotionListener(mouseHandler);
 
-        box = new Box(gc);
+        box = new Box(gc, Ships.BATTLESHIP);
         mouseHandler.addObserver(box);
 
         this.tileManager = new TileManager(gc);
