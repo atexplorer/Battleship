@@ -1,10 +1,11 @@
 package org.atexplorer.piece;
 
 public enum Orientation {
-    UP (-10),
-    RIGHT (1),
     DOWN (10),
-    LEFT (-1);
+    LEFT (-1),
+    UP (-10),
+    RIGHT (1);
+
 
     private final int interval;
 

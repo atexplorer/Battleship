@@ -3,6 +3,8 @@ package org.atexplorer.entity;
 
 import org.atexplorer.dto.MouseEvent;
 import org.atexplorer.gui.InputObserver;
+import org.atexplorer.piece.Orientation;
+import org.atexplorer.piece.Ships;
 import org.atexplorer.utils.GameConfig;
 import org.atexplorer.utils.ImageUtility;
 
@@ -10,52 +12,65 @@ import javax.imageio.ImageIO;
 import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
-import java.util.ArrayDeque;
-import java.util.Objects;
-import java.util.Queue;
+import java.util.*;
+import java.util.List;
 
 public class Box implements InputObserver {
 
-    private BufferedImage activeImage;
-    private final Queue<BufferedImage> images;
+
+    private final Map<Integer, BufferedImage> activeImages;
+    private final List<BufferedImage> destroyImage;
+
+    private final Ships ship;
+    private Orientation orientation;
     private final GameConfig gc;
 
+    private boolean selected = false;
     private int screenX;
     private int screenY;
-
-    private boolean moveable = true;
-
-    private boolean selected = false;
     private int xDif;
     private int yDif;
 
+    private boolean moveable = true;
 
-    private String[] fileNames = new String[]{"RedSquare","GreenSquare"};
-
-    public Box(GameConfig gc){
+    public Box(GameConfig gc, Ships ship){
         this.gc = gc;
+        this.ship = ship;
 
-        //Todo: Each ship will need a default setter method, to set default screenX and screenY
         setDefaultLocation();
 
-        this.images = new ArrayDeque<>();
-        for(String fileName : fileNames){
-            loadImage(fileName, gc.getTileSize(), gc.getTileSize());
+        this.activeImages = new HashMap<>();
+        for(String fileName : ship.getImageNames()){
+            activeImages.put(activeImages.size(), loadImage(fileName, gc.getTileSize(), gc.getTileSize()));
         }
-        activeImage = images.poll();
+
+        this.destroyImage = new ArrayList<>();
+        for(int i = 0; i < ship.getLength(); i++){
+            destroyImage.add(loadImage("RedSquare", gc.getTileSize(), gc.getTileSize()));
+        }
+
+
     }
 
-    private void loadImage(String fileName, int height, int width){
+    private BufferedImage loadImage(String fileName, int height, int width){
+        BufferedImage bufferedImage = null;
+
         try{
-            BufferedImage bufferedImage = ImageIO.read(Objects.requireNonNull(getClass().getResourceAsStream("/tiles/" + fileName + ".png")));
-            images.add(ImageUtility.scaledImage(bufferedImage, width, height, false));
+            bufferedImage = ImageIO.read(Objects.requireNonNull(getClass().getResourceAsStream("/tiles/" + fileName + ".png")));
+            bufferedImage = ImageUtility.scaledImage(bufferedImage, width, height, true);
         }catch (IOException e){
             e.printStackTrace();
         }
+
+        return bufferedImage;
     }
 
     public void draw(Graphics2D g2){
-        g2.drawImage(activeImage, screenX, screenY, null);
+        for(Map.Entry<Integer, BufferedImage> imageEntry : activeImages.entrySet()) {
+            int xCord = getImageX(imageEntry.getKey());
+            int yCord = getImageY(imageEntry.getKey());
+            g2.drawImage(imageEntry.getValue(), xCord, yCord, null);
+        }
     }
 
     public void update(MouseEvent e){
@@ -73,17 +88,19 @@ public class Box implements InputObserver {
     }
 
     private void shipClicked() {
-        images.add(activeImage);
-        activeImage = images.poll();
+        if(moveable){
+            int nextOrientation = (Orientation.valueOf(orientation.toString()).ordinal() + 1) % Orientation.values().length;
+            orientation = Orientation.values()[nextOrientation];
+        }
     }
 
     private void shipHeld(int x, int y) {
-        xDif = x - screenX;
-        yDif = y -screenY;
-
         selected = true;
+        xDif = x - screenX;
+        yDif = y - screenY;
     }
 
+    //todo: the boundary of the playable field should probably be handled by the tile manager
     private void shipDragged(int x, int y){
         screenX = x - xDif;
         screenY = y - yDif;
@@ -101,6 +118,7 @@ public class Box implements InputObserver {
         }
     }
 
+    //todo: the snapping logic should probably be handled by some kind of service that validates the ships location on the board
     private void placeShip() {
         selected = false;
 
@@ -118,13 +136,36 @@ public class Box implements InputObserver {
         }*/
     }
 
-    //Todo: this will need to get the default value from the ship it represents
     private void setDefaultLocation(){
-        screenX = 25*gc.getTileSize();
-        screenY = 12*gc.getTileSize();
+        orientation = Orientation.DOWN;
+        screenX = ship.getDefaultX()*gc.getTileSize();
+        screenY = ship.getDefaultY()*gc.getTileSize();
     }
 
     private boolean inImage(int x, int y){
-        return x >= screenX && x <= screenX + gc.getTileSize() && y >= screenY && y<= screenY + gc.getTileSize();
+        for(Map.Entry<Integer, BufferedImage> imageEntry : activeImages.entrySet()) {
+            int xCord = getImageX(imageEntry.getKey());
+            int yCord = getImageY(imageEntry.getKey());
+            if (x >= xCord && x <= xCord + gc.getTileSize() && y >= yCord && y<= yCord + gc.getTileSize()){
+                return true;
+            }
+        }
+        return false;
+    }
+
+    private int getImageX(int imagePos){
+        return switch(orientation){
+            case Orientation.RIGHT -> screenX + (gc.getTileSize()*imagePos);
+            case Orientation.LEFT -> screenX - (gc.getTileSize()*imagePos);
+            default -> screenX;
+        };
+    }
+
+    private int getImageY(int imagePos){
+        return switch(orientation){
+            case Orientation.DOWN -> screenY + (gc.getTileSize()*imagePos);
+            case Orientation.UP -> screenY - (gc.getTileSize()*imagePos);
+            default -> screenY;
+        };
     }
 }
